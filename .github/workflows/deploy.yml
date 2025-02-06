@@ -69,19 +69,26 @@ jobs:
             echo "Docker Compose ya está instalado."
           fi
 
+          # Exportar variables de entorno para docker-compose
+          export branch_name=$(echo "${{ github.ref_name }}" | tr '[:upper:]' '[:lower:]')
+          export DB_URL="${{ secrets.DB_URL }}"
+          export DB_USERNAME="${{ secrets.DB_USERNAME }}"
+          export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+          export PORT_CREATE_DOCTOR="${{ secrets.PORT_CREATE_DOCTOR }}"
+
           # Crear archivo docker-compose.yml estático
           cat <<EOL > docker-compose.yml
           version: '3'
           services:
             ms-createdoctor:
-              image: dssanguano/ms-createdoctor:${branch_name}
+              image: dssanguano/ms-createdoctor:\${branch_name}
               ports:
-                - "${{ secrets.PORT_CREATE_DOCTOR }}:${{ secrets.PORT_CREATE_DOCTOR }}"
+                - "\${PORT_CREATE_DOCTOR}:\${PORT_CREATE_DOCTOR}"
               environment:
-                DB_URL: j${{ secrets.DB_URL }}
-                DB_USERNAME: ${{ secrets.DB_USERNAME }}
-                DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-                PORT_CREATE_DOCTOR: ${{ secrets.PORT_CREATE_DOCTOR }}
+                DB_URL: \${DB_URL}
+                DB_USERNAME: \${DB_USERNAME}
+                DB_PASSWORD: \${DB_PASSWORD}
+                PORT_CREATE_DOCTOR: \${PORT_CREATE_DOCTOR}
           EOL
 
           # Imprimir el contenido del archivo docker-compose.yml para depuración
