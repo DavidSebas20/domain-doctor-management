@@ -89,7 +89,7 @@ jobs:
           version: '3'
           services:
             ms-createdoctor:
-              image: dssanguano/ms-createdoctor:\${branch_name}
+              image: dssanguano/ms-createdoctor:dev
               ports:
                 - "\${PORT_CREATE_DOCTOR}:\${PORT_CREATE_DOCTOR}"
               environment:
