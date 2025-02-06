@@ -52,7 +52,7 @@ jobs:
         run: |
           rm -rf domain_repo/ms-createdoctor
           mkdir -p domain_repo/ms-createdoctor
-          rsync -av --exclude='.git' --exclude='domain_repo' . domain_repo/ms-createdoctor/
+          rsync -av --exclude='.git' --exclude='domain_repo' . domain_repo/ms-createdoctor/ 
 
       - name: Commit and push changes
         run: |
