@@ -1,29 +1,28 @@
-# Etapa 1: Construcción del proyecto con Maven
-FROM maven:3.9-eclipse-temurin-21 AS build
+# Use a base image with JDK 21
+FROM openjdk:21-jdk-slim as build
 
-# Establecer el directorio de trabajo dentro del contenedor
+# Set the working directory
 WORKDIR /app
 
-# Copiar el archivo pom.xml
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Copy pom.xml and download dependencies
 COPY pom.xml .
 
-# Descargar las dependencias (sin compilar el código aún)
+# Run mvn dependency:go-offline to download dependencies
 RUN mvn dependency:go-offline
 
-# Copiar el código fuente de la aplicación
-COPY src ./src
+# Copy source code and run the build
+COPY src /app/src
 
-# Compilar y empaquetar la aplicación
+# Run Maven to build the project and create the JAR file
 RUN mvn clean package -DskipTests
 
-# Etapa 2: Creación de la imagen final
-FROM eclipse-temurin:21-jre
+# Multi-stage build to reduce final image size
+FROM openjdk:21-jdk-slim
 
-# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el JAR generado desde la etapa de construcción
-COPY --from=build /app/target/*.jar app.jar
-
-# Definir el comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Copy the JAR file from the build stage
+COPY --from=build /app/target/readappointment-0.0.1-SNAPSHOT.jar /app/readappointment.jar
