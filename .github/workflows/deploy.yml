@@ -76,13 +76,6 @@ jobs:
           export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
           export PORT_CREATE_DOCTOR="${{ secrets.PORT_CREATE_DOCTOR }}"
           export host="${{ secrets.HOST }}"
-          # Ver las variables
-          echo "host: $host"
-          echo "branch_name: $branch_name"
-          echo "DB_URL: $DB_URL"
-          echo "DB_USERNAME: $DB_USERNAME"
-          echo "DB_PASSWORD: $DB_PASSWORD"
-          echo "PORT_CREATE_DOCTOR: $PORT_CREATE_DOCTOR"
 
           # Crear archivo docker-compose.yml estático
           cat <<EOL > docker-compose.yml
