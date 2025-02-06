@@ -22,7 +22,7 @@ jobs:
       # Paso 3: Construir y subir las imágenes Docker para cada microservicio
       - name: Build and Push Docker Images
         run: |
-          branch_name=$(echo "${{ github.ref_name }}" | tr '[:upper:]' '[:lower:]')
+          branch_name=$(echo "${{ github.ref_name }}")
           for dir in $(ls -d */); do
             service_name=$(basename "$dir")
             echo "Building Docker image for $service_name..."
@@ -89,7 +89,7 @@ jobs:
           version: '3'
           services:
             ms-createdoctor:
-              image: dssanguano/ms-createdoctor:dev
+              image: dssanguano/ms-createdoctor:\${branch_name}
               ports:
                 - "\${PORT_CREATE_DOCTOR}:\${PORT_CREATE_DOCTOR}"
               environment:
