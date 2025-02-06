@@ -25,4 +25,4 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY --from=build /app/target/readappointment-0.0.1-SNAPSHOT.jar /app/readappointment.jar
+COPY --from=build /app/target/createdoctor-0.0.1-SNAPSHOT.jar /app/createdoctor.jar
