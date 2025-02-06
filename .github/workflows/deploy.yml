@@ -45,7 +45,7 @@ jobs:
       # Paso 2: Desplegar todos los microservicios usando el archivo docker-compose.yml
       - name: Deploy to Dev Instance
         run: |
-          ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/main_key.pem ubuntu@${{ secrets.HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/main_key.pem ubuntu@${{ secrets.HOST }} << EOF
           # Verificar e instalar Docker si no está instalado
           if ! command -v docker &> /dev/null; then
             echo "Docker no está instalado. Procediendo a instalar..."
@@ -70,11 +70,17 @@ jobs:
           fi
 
           # Exportar variables de entorno para docker-compose
-          export branch_name=$(echo "${{ github.ref_name }}" | tr '[:upper:]' '[:lower:]')
+          export branch_name="${{ github.ref_name}}"
           export DB_URL="${{ secrets.DB_URL }}"
           export DB_USERNAME="${{ secrets.DB_USERNAME }}"
           export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
           export PORT_CREATE_DOCTOR="${{ secrets.PORT_CREATE_DOCTOR }}"
+          # Ver las variables
+          echo "branch_name: $branch_name"
+          echo "DB_URL: $DB_URL"
+          echo "DB_USERNAME: $DB_USERNAME"
+          echo "DB_PASSWORD: $DB_PASSWORD"
+          echo "PORT_CREATE_DOCTOR: $PORT_CREATE_DOCTOR"
 
           # Crear archivo docker-compose.yml estático
           cat <<EOL > docker-compose.yml
