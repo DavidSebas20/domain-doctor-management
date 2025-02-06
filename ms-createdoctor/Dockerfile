@@ -1,28 +1,25 @@
-# Use a base image with JDK 21
-FROM openjdk:21-jdk-slim as build
-
-# Set the working directory
+# Etapa 1: Construcción del proyecto con Maven
+FROM maven:3.9-eclipse-temurin-21 AS build
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
-
-# Install Maven
-RUN apt-get update && apt-get install -y maven
-
-# Copy pom.xml and download dependencies
+# Copiar el archivo pom.xml
 COPY pom.xml .
-
-# Run mvn dependency:go-offline to download dependencies
+# Descargar las dependencias (sin compilar el código aún)
 RUN mvn dependency:go-offline
-
-# Copy source code and run the build
-COPY src /app/src
-
-# Run Maven to build the project and create the JAR file
+# Copiar el código fuente de la aplicación
+COPY src ./src
+# Copiar el archivo application.properties
+COPY src/main/resources/application.properties ./src/main/resources/application.properties
+# Compilar y empaquetar la aplicación
 RUN mvn clean package -DskipTests
 
-# Multi-stage build to reduce final image size
-FROM openjdk:21-jdk-slim
-
+# Etapa 2: Creación de la imagen final
+FROM eclipse-temurin:21-jre
+# Establecer el directorio de trabajo
 WORKDIR /app
-
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/createdoctor-0.0.1-SNAPSHOT.jar /app/createdoctor.jar
+# Copiar el JAR generado desde la etapa de construcción
+COPY --from=build /app/target/*.jar app.jar
+# Copiar el archivo application.properties
+COPY --from=build /app/src/main/resources/application.properties ./application.properties
+# Definir el comando para ejecutar la aplicación
+ENTRYPOINT ["java", "-jar", "app.jar"]
